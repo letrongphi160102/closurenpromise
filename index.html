@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giáo Án: Closure & Promise — JavaScript Chuyên Sâu</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0f0f11;
+    --bg2: #16161a;
+    --bg3: #1e1e24;
+    --bg4: #26262f;
+    --border: #2e2e38;
+    --border2: #3a3a48;
+    --text: #e8e6f0;
+    --text2: #9e9cb0;
+    --text3: #5e5c70;
+    --accent: #7c6af7;
+    --accent2: #a892ff;
+    --green: #4ade9a;
+    --green-bg: #0d2a1e;
+    --amber: #f5b942;
+    --amber-bg: #2a1f08;
+    --red: #f46060;
+    --red-bg: #2a0d0d;
+    --blue: #60a5fa;
+    --blue-bg: #0d1e2a;
+    --teal: #34d399;
+    --kw: #c084fc;
+    --fn: #60a5fa;
+    --str: #86efac;
+    --num: #fbbf24;
+    --cm: #4a4860;
+    --r: 10px;
+    --r2: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── LAYOUT ── */
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 240px;
+    background: var(--bg2); border-right: 1px solid var(--border);
+    overflow-y: auto; z-index: 100;
+    padding: 0 0 2rem;
+  }
+  .sidebar-logo {
+    padding: 1.5rem 1.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.5rem;
+  }
+  .sidebar-logo h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 17px; font-weight: 500;
+    color: var(--text); line-height: 1.3;
+  }
+  .sidebar-logo span {
+    font-size: 12px; color: var(--text3);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .nav-section {
+    padding: 0.75rem 1.25rem 0.25rem;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text3);
+  }
+  .nav-item {
+    display: block; padding: 0.4rem 1.25rem;
+    font-size: 13px; color: var(--text2);
+    text-decoration: none; border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { color: var(--text); background: var(--bg3); }
+  .nav-item.active { color: var(--accent2); border-left-color: var(--accent); background: rgba(124,106,247,0.08); }
+  .nav-item .lv {
+    display: inline-block; font-size: 9px; padding: 1px 5px;
+    border-radius: 3px; margin-left: 6px; font-weight: 500;
+    vertical-align: middle;
+  }
+  .lv-y { background: rgba(245,185,66,0.15); color: var(--amber); }
+  .lv-r { background: rgba(244,96,96,0.15); color: var(--red); }
+  .lv-g { background: rgba(74,222,154,0.12); color: var(--green); }
+
+  .main {
+    margin-left: 240px;
+    max-width: 900px;
+    padding: 3rem 2.5rem 5rem;
+  }
+
+  /* ── HEADINGS ── */
+  .page-title {
+    font-family: 'Fraunces', serif;
+    font-size: 38px; font-weight: 500;
+    line-height: 1.2; color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .page-sub {
+    font-size: 16px; color: var(--text2);
+    margin-bottom: 2.5rem;
+  }
+  h2.module-title {
+    font-family: 'Fraunces', serif;
+    font-size: 26px; font-weight: 500;
+    color: var(--text); margin: 3rem 0 0.25rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  h3.section-title {
+    font-size: 18px; font-weight: 500;
+    color: var(--text); margin: 2rem 0 0.75rem;
+  }
+  h4.sub-title {
+    font-size: 14px; font-weight: 500;
+    color: var(--text2); margin: 1.25rem 0 0.5rem;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  p { color: var(--text2); margin-bottom: 0.75rem; }
+  p strong { color: var(--text); font-weight: 500; }
+  p code { font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: var(--bg4); padding: 1px 5px; border-radius: 3px; color: var(--accent2); }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--r); padding: 1.25rem 1.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; line-height: 1.85;
+    overflow-x: auto; margin: 0.75rem 0 1rem;
+    position: relative;
+  }
+  .code-block .label {
+    position: absolute; top: 10px; right: 12px;
+    font-size: 10px; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.07em;
+  }
+  .kw { color: var(--kw); }
+  .fn { color: var(--fn); }
+  .str { color: var(--str); }
+  .num { color: var(--num); }
+  .cm { color: var(--cm); }
+  .hl { background: rgba(244,96,96,0.12); display: block; margin: 0 -1.5rem; padding: 0 1.5rem; border-left: 2px solid var(--red); }
+  .hl-ok { background: rgba(74,222,154,0.08); display: block; margin: 0 -1.5rem; padding: 0 1.5rem; border-left: 2px solid var(--green); }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--r); padding: 1.25rem 1.5rem;
+    margin: 0.75rem 0;
+  }
+  .card-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; margin: 0.75rem 0;
+  }
+  .note {
+    border-radius: var(--r2); padding: 0.875rem 1.1rem;
+    margin: 0.75rem 0; font-size: 13.5px;
+    border-left: 3px solid transparent; line-height: 1.65;
+  }
+  .note-purple { background: rgba(124,106,247,0.1); border-left-color: var(--accent); color: var(--text2); }
+  .note-green { background: var(--green-bg); border-left-color: var(--green); color: var(--text2); }
+  .note-red { background: var(--red-bg); border-left-color: var(--red); color: var(--text2); }
+  .note-amber { background: var(--amber-bg); border-left-color: var(--amber); color: var(--text2); }
+  .note strong { color: var(--text); }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-block; font-size: 11px; padding: 3px 9px;
+    border-radius: 4px; font-weight: 500; margin-bottom: 8px;
+  }
+  .badge-red { background: rgba(244,96,96,0.15); color: var(--red); }
+  .badge-green { background: rgba(74,222,154,0.12); color: var(--green); }
+  .badge-purple { background: rgba(124,106,247,0.15); color: var(--accent2); }
+  .badge-amber { background: rgba(245,185,66,0.15); color: var(--amber); }
+  .badge-blue { background: rgba(96,165,250,0.15); color: var(--blue); }
+
+  /* ── MODULE HEADER ── */
+  .module-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 14px;
+    font-size: 12px; color: var(--text2);
+    margin-bottom: 0.5rem; font-family: 'IBM Plex Mono', monospace;
+  }
+  .module-badge .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+  }
+
+  /* ── COMPARISON GRID ── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px; margin: 1rem 0;
+  }
+  .compare-box {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--r); overflow: hidden;
+  }
+  .compare-head {
+    padding: 8px 14px; font-size: 12px; font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .compare-body { padding: 0; }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; margin: 0.75rem 0; }
+  .checklist li {
+    display: flex; gap: 10px; padding: 0.4rem 0;
+    font-size: 13.5px; color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .icon { flex-shrink: 0; width: 18px; text-align: center; }
+  .checklist .ok { color: var(--green); }
+  .checklist .warn { color: var(--amber); }
+  .checklist .err { color: var(--red); }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 13.5px; }
+  th { text-align: left; padding: 8px 12px; background: var(--bg3); color: var(--text); font-weight: 500; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; color: var(--text2); border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 4rem; padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text3);
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 1.5rem 1rem 4rem; }
+    .card-grid, .compare-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h1>Closure & Promise</h1>
+    <span>JavaScript Chuyên Sâu · 14 mục</span>
+  </div>
+
+  <div class="nav-section">Module 1 · Closure</div>
+  <a class="nav-item" href="#ec">Execution Context & Call Stack <span class="lv lv-g">cơ bản</span></a>
+  <a class="nav-item" href="#scope">Scope & Scope Chain <span class="lv lv-g">cơ bản</span></a>
+  <a class="nav-item" href="#closure-core">Closure — Bản chất <span class="lv lv-y">trung cấp</span></a>
+  <a class="nav-item" href="#loop-bug">Closure trong vòng lặp <span class="lv lv-y">trung cấp</span></a>
+  <a class="nav-item" href="#factory">Factory Function <span class="lv lv-r">nâng cao</span></a>
+  <a class="nav-item" href="#memo">Memoization & Private state <span class="lv lv-r">nâng cao</span></a>
+
+  <div class="nav-section">Module 2 · Promise</div>
+  <a class="nav-item" href="#eventloop">Event Loop <span class="lv lv-g">cơ bản</span></a>
+  <a class="nav-item" href="#callback-hell">Callback Hell <span class="lv lv-g">cơ bản</span></a>
+  <a class="nav-item" href="#promise-core">Promise — 3 Trạng thái <span class="lv lv-y">trung cấp</span></a>
+  <a class="nav-item" href="#combinators">Promise Combinators <span class="lv lv-r">nâng cao</span></a>
+  <a class="nav-item" href="#async-await">async / await <span class="lv lv-r">nâng cao</span></a>
+
+  <div class="nav-section">Module 3 · Thực chiến</div>
+  <a class="nav-item" href="#closure-async">Closure trong Async <span class="lv lv-r">nâng cao</span></a>
+  <a class="nav-item" href="#debounce-throttle">Debounce & Throttle <span class="lv lv-r">nâng cao</span></a>
+  <a class="nav-item" href="#lru-cache">LRU Cache với TTL <span class="lv lv-r">nâng cao</span></a>
+
+  <div class="nav-section">Tham khảo</div>
+  <a class="nav-item" href="#interview">Câu hỏi phỏng vấn</a>
+  <a class="nav-item" href="#cheatsheet">Cheat Sheet</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- HERO -->
+  <div style="margin-bottom: 3rem;">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--accent); margin-bottom: 0.75rem; letter-spacing: 0.06em;">GIÁO ÁN CHUYÊN SÂU · JAVASCRIPT</div>
+    <h1 class="page-title">Closure &amp;<br>Promise</h1>
+    <p class="page-sub">Từ bản chất đến thực chiến — 14 mục · 3 module · Cơ bản đến Nâng cao</p>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:3px;font-family:'IBM Plex Mono',monospace;">MỤC TIÊU</div>
+        <div style="color:var(--text2);">Hiểu bản chất, không chỉ cú pháp</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:3px;font-family:'IBM Plex Mono',monospace;">ĐỐI TƯỢNG</div>
+        <div style="color:var(--text2);">Junior → Senior JavaScript</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-size:13px;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:3px;font-family:'IBM Plex Mono',monospace;">PHƯƠNG PHÁP</div>
+        <div style="color:var(--text2);">Bản chất → Ví dụ → Thực chiến</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════════════════════ MODULE 1 ═══ -->
+  <div class="module-badge"><div class="dot" style="background:var(--accent)"></div>Module 1</div>
+  <h2 class="module-title" id="module1">Closure</h2>
+
+  <!-- 1.1 Execution Context -->
+  <h3 class="section-title" id="ec">1.1 Execution Context &amp; Call Stack</h3>
+  <span class="badge badge-green">Cơ bản</span>
+  <p>Mỗi khi JavaScript chạy một function, engine tạo ra một <strong>Execution Context (EC)</strong> — một "hộp cát" chứa: biến cục bộ, tham chiếu đến scope cha, và <code>this</code>. Tất cả EC được quản lý bởi <strong>Call Stack</strong> theo nguyên tắc LIFO.</p>
+
+  <div class="code-block"><span class="label">JavaScript</span>
+<span class="kw">const</span> x = <span class="num">10</span>;           <span class="cm">// Global EC: x = 10</span>
+
+<span class="kw">function</span> <span class="fn">outer</span>() {
+  <span class="kw">const</span> y = <span class="num">20</span>;         <span class="cm">// outer() EC: y = 20</span>
+  <span class="kw">function</span> <span class="fn">inner</span>() {
+    <span class="kw">const</span> z = <span class="num">30</span>;       <span class="cm">// inner() EC: z = 30</span>
+    console.<span class="fn">log</span>(x + y + z); <span class="cm">// 60 — truy cập được cả 3 scope</span>
+  }
+  <span class="fn">inner</span>();             <span class="cm">// push inner EC → pop sau khi xong</span>
+}
+<span class="fn">outer</span>();               <span class="cm">// push outer EC → pop sau khi xong</span></div>
+
+  <div class="note note-purple">
+    <strong>Thứ tự Call Stack:</strong> Global EC luôn ở đáy. Mỗi function call push một EC mới lên top. Khi function kết thúc, EC bị pop — biến bên trong bị hủy (trừ khi closure giữ lại).
+  </div>
+
+  <table>
+    <tr><th>Thời điểm</th><th>Call Stack</th><th>EC hiện tại</th></tr>
+    <tr><td>Khởi động</td><td>[Global]</td><td>Global EC: x=10</td></tr>
+    <tr><td>outer() được gọi</td><td>[Global, outer]</td><td>outer EC: y=20</td></tr>
+    <tr><td>inner() được gọi</td><td>[Global, outer, inner]</td><td>inner EC: z=30</td></tr>
+    <tr><td>inner() xong</td><td>[Global, outer]</td><td>z bị hủy</td></tr>
+    <tr><td>outer() xong</td><td>[Global]</td><td>y bị hủy</td></tr>
+  </table>
+
+  <!-- 1.2 Scope -->
+  <h3 class="section-title" id="scope">1.2 Scope &amp; Scope Chain</h3>
+  <span class="badge badge-green">Cơ bản</span>
+  <p><strong>Lexical scope</strong> — scope được xác định tại lúc <em>viết code</em>, không phải lúc chạy. JavaScript nhìn vào <strong>nơi function được định nghĩa</strong> để tìm biến.</p>
+  <p><strong>Scope chain</strong> — khi tìm biến, JS tìm từ scope hiện tại → lên scope cha → lên tiếp... cho đến Global. Nếu không tìm thấy → <code>ReferenceError</code>.</p>
+
+  <div class="code-block">
+<span class="cm">// Lexical scope — quan trọng: nơi ĐỊNH NGHĨA, không phải nơi GỌI</span>
+<span class="kw">const</span> name = <span class="str">'Global'</span>;
+
+<span class="kw">function</span> <span class="fn">greet</span>() {
+  console.<span class="fn">log</span>(name); <span class="cm">// 'Global' — đọc từ scope cha (lexical)</span>
+}
+
+<span class="kw">function</span> <span class="fn">wrapper</span>() {
+  <span class="kw">const</span> name = <span class="str">'Local'</span>;
+  <span class="fn">greet</span>(); <span class="cm">// vẫn in 'Global' — greet được định nghĩa ở Global scope!</span>
+}
+
+<span class="fn">wrapper</span>(); <span class="cm">// → 'Global' (không phải 'Local')</span></div>
+
+  <div class="note note-amber">
+    <strong>Quy tắc tìm biến trong scope chain:</strong> inner → outer → global → undefined (hoặc ReferenceError với strict mode).
+  </div>
+
+  <!-- 1.3 Closure Core -->
+  <h3 class="section-title" id="closure-core">1.3 Closure — Bản chất</h3>
+  <span class="badge badge-amber">Trung cấp</span>
+  <p><strong>Định nghĩa chính xác:</strong> Closure là khả năng một function <strong>ghi nhớ và tiếp cận lexical scope của nó</strong> ngay cả khi function đó đang thực thi bên ngoài scope ban đầu.</p>
+  <p>Khi <code>outer()</code> kết thúc, EC của nó bị pop khỏi Call Stack. Nhưng nếu hàm bên trong vẫn còn tham chiếu đến biến của outer — JavaScript <strong>không hủy</strong> những biến đó. Chúng sống trong <strong>Closure Environment</strong>.</p>
+
+  <div class="code-block">
+<span class="kw">function</span> <span class="fn">makeCounter</span>() {
+  <span class="kw">let</span> count = <span class="num">0</span>; <span class="cm">// biến "sống" trong closure</span>
+
+  <span class="kw">return function</span>() {
+    count++;
+    <span class="kw">return</span> count;
+  };
+}
+
+<span class="kw">const</span> counter = <span class="fn">makeCounter</span>();
+<span class="cm">// makeCounter() đã kết thúc — nhưng count vẫn còn sống!</span>
+
+counter(); <span class="cm">// → 1</span>
+counter(); <span class="cm">// → 2</span>
+counter(); <span class="cm">// → 3</span>
+
+<span class="cm">// Mỗi lần gọi makeCounter() tạo Closure Environment RIÊNG:</span>
+<span class="kw">const</span> c1 = <span class="fn">makeCounter</span>();
+<span class="kw">const</span> c2 = <span class="fn">makeCounter</span>();
+c1(); c1(); <span class="cm">// c1 count = 2</span>
+c2();       <span class="cm">// c2 count = 1 — hoàn toàn độc lập!</span></div>
+
+  <div class="note note-purple">
+    <strong>Closure = function + environment:</strong> Mỗi lần gọi <code>makeCounter()</code>, một Closure Environment mới được tạo với biến <code>count</code> riêng biệt. c1 và c2 không chia sẻ state với nhau.
+  </div>
+
+  <!-- 1.4 Loop Bug -->
+  <h3 class="section-title" id="loop-bug">1.4 Closure trong vòng lặp — Lỗi kinh điển</h3>
+  <span class="badge badge-amber">Trung cấp</span>
+  <p>Đây là <strong>bẫy phỏng vấn số 1</strong> về closure. Vấn đề xảy ra khi dùng <code>var</code> trong for loop.</p>
+
+  <div class="compare-grid">
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--red)">❌ Sai — dùng var</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+<span class="kw">var</span> funcs = [];
+<span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+  funcs[i] = <span class="kw">function</span>() {
+    <span class="kw">return</span> i; <span class="cm">// var dùng chung!</span>
+  };
+}
+funcs[<span class="num">0</span>](); <span class="cm">// → 3 (không phải 0!)</span>
+funcs[<span class="num">1</span>](); <span class="cm">// → 3</span>
+funcs[<span class="num">2</span>](); <span class="cm">// → 3</span></div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--green)">✅ Fix 1 — dùng let</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+<span class="kw">const</span> funcs = [];
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+  funcs[i] = <span class="kw">function</span>() {
+    <span class="kw">return</span> i; <span class="cm">// let: binding riêng mỗi iteration</span>
+  };
+}
+funcs[<span class="num">0</span>](); <span class="cm">// → 0 ✓</span>
+funcs[<span class="num">1</span>](); <span class="cm">// → 1 ✓</span>
+funcs[<span class="num">2</span>](); <span class="cm">// → 2 ✓</span></div>
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--green)">✅ Fix 2 — IIFE</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+<span class="kw">var</span> funcs = [];
+<span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+  funcs[i] = (<span class="kw">function</span>(j) {
+    <span class="cm">// j là parameter — copy của i tại thời điểm này</span>
+    <span class="kw">return function</span>() { <span class="kw">return</span> j; };
+  })(i); <span class="cm">// gọi ngay, truyền i vào</span>
+}</div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--green)">✅ Fix 3 — Factory function</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+<span class="kw">function</span> <span class="fn">createFunc</span>(n) {
+  <span class="kw">return function</span>() { <span class="kw">return</span> n; };
+}
+
+<span class="kw">var</span> funcs = [];
+<span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
+  funcs[i] = <span class="fn">createFunc</span>(i);
+}
+<span class="cm">// Cách sạch và dễ đọc nhất trong thực tế</span></div>
+    </div>
+  </div>
+
+  <div class="note note-red">
+    <strong>Tại sao var bị lỗi?</strong> <code>var</code> không có block scope — tất cả 3 function đều closure over <em>cùng một biến i</em>. Khi vòng lặp kết thúc, i = 3. Khi gọi bất kỳ function nào → đọc i lúc đó = 3. <code>let</code> tạo một binding mới cho mỗi iteration nên mỗi function có i riêng.
+  </div>
+
+  <!-- 1.5 Factory Function -->
+  <h3 class="section-title" id="factory">1.5 Factory Function Chuyên Sâu</h3>
+  <span class="badge badge-red">Nâng cao</span>
+  <p>Factory function không chỉ là "hàm trả về object" — nó là cách tạo <strong>nhiều instance độc lập, mỗi cái có closure riêng</strong>, thay thế được <code>class</code> trong nhiều tình huống.</p>
+
+  <div class="code-block">
+<span class="cm">// Pattern cơ bản — Private state + Public interface</span>
+<span class="kw">function</span> <span class="fn">createUser</span>(name, role) {
+  <span class="kw">let</span> loginCount = <span class="num">0</span>;             <span class="cm">// PRIVATE — chỉ closure thấy</span>
+  <span class="kw">const</span> createdAt = <span class="kw">new</span> <span class="fn">Date</span>();   <span class="cm">// PRIVATE</span>
+
+  <span class="kw">return</span> {
+    name, role,                    <span class="cm">// PUBLIC</span>
+    <span class="fn">login</span>() {
+      loginCount++;
+      <span class="kw">return</span> <span class="str">`<span class="kw">${</span>name<span class="kw">}</span> login lần #<span class="kw">${</span>loginCount<span class="kw">}</span>`</span>;
+    },
+    <span class="fn">getStats</span>: () => ({ loginCount, createdAt })
+  };
+}
+
+<span class="kw">const</span> alice = <span class="fn">createUser</span>(<span class="str">'Alice'</span>, <span class="str">'admin'</span>);
+<span class="kw">const</span> bob   = <span class="fn">createUser</span>(<span class="str">'Bob'</span>, <span class="str">'user'</span>);
+
+alice.<span class="fn">login</span>();  <span class="cm">// → "Alice login lần #1"</span>
+alice.<span class="fn">login</span>();  <span class="cm">// → "Alice login lần #2"</span>
+bob.<span class="fn">login</span>();   <span class="cm">// → "Bob login lần #1"  (độc lập!)</span>
+
+alice.loginCount; <span class="cm">// → undefined — KHÔNG truy cập được trực tiếp!</span></div>
+
+  <h4 class="sub-title">Factory vs Class — Vấn đề this</h4>
+  <div class="compare-grid">
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--red)">❌ Class — this binding phức tạp</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+<span class="kw">class</span> <span class="fn">Counter</span> {
+  <span class="fn">constructor</span>() { <span class="kw">this</span>.n = <span class="num">0</span>; }
+  <span class="fn">inc</span>() { <span class="kw">this</span>.n++; }
+}
+<span class="kw">const</span> c = <span class="kw">new</span> <span class="fn">Counter</span>();
+<span class="kw">const</span> { inc } = c;
+inc(); <span class="cm">// 💥 TypeError: this là undefined</span>
+<span class="cm">// Phải bind: c.inc.bind(c)</span></div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--green)">✅ Factory — không cần this</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+<span class="kw">function</span> <span class="fn">createCounter</span>() {
+  <span class="kw">let</span> n = <span class="num">0</span>;
+  <span class="kw">return</span> {
+    inc: () => ++n,  <span class="cm">// arrow fn dùng closure</span>
+    get: () => n
+  };
+}
+<span class="kw">const</span> { inc } = <span class="fn">createCounter</span>();
+inc(); inc(); <span class="cm">// ✅ Hoạt động bình thường</span></div>
+    </div>
+  </div>
+
+  <h4 class="sub-title">Composition — ghép khả năng thay vì kế thừa</h4>
+  <div class="code-block">
+<span class="cm">// Các "ability" riêng lẻ:</span>
+<span class="kw">const</span> <span class="fn">canSwim</span> = (state) => ({ <span class="fn">swim</span>: () => <span class="str">`<span class="kw">${</span>state.name<span class="kw">}</span> đang bơi`</span> });
+<span class="kw">const</span> <span class="fn">canFly</span>  = (state) => ({ <span class="fn">fly</span>:  () => <span class="str">`<span class="kw">${</span>state.name<span class="kw">}</span> đang bay`</span> });
+<span class="kw">const</span> <span class="fn">canDive</span> = (state) => ({ <span class="fn">dive</span>: () => <span class="str">`<span class="kw">${</span>state.name<span class="kw">}</span> đang lặn`</span> });
+
+<span class="cm">// Compose tùy ý — không cần kế thừa:</span>
+<span class="kw">function</span> <span class="fn">createDuck</span>(name) {
+  <span class="kw">const</span> state = { name };
+  <span class="kw">return</span> Object.<span class="fn">assign</span>({}, <span class="fn">canSwim</span>(state), <span class="fn">canFly</span>(state), <span class="fn">canDive</span>(state));
+}
+<span class="kw">function</span> <span class="fn">createPenguin</span>(name) {
+  <span class="kw">const</span> state = { name };
+  <span class="kw">return</span> Object.<span class="fn">assign</span>({}, <span class="fn">canSwim</span>(state), <span class="fn">canDive</span>(state)); <span class="cm">// không có fly!</span>
+}</div>
+
+  <h4 class="sub-title">Partial Application</h4>
+  <div class="code-block">
+<span class="kw">function</span> <span class="fn">partial</span>(fn, ...presetArgs) {
+  <span class="kw">return function</span>(...laterArgs) { <span class="cm">// closure giữ presetArgs</span>
+    <span class="kw">return</span> fn(...presetArgs, ...laterArgs);
+  };
+}
+
+<span class="kw">const</span> multiply = (a, b) => a * b;
+<span class="kw">const</span> double = <span class="fn">partial</span>(multiply, <span class="num">2</span>);
+<span class="kw">const</span> triple = <span class="fn">partial</span>(multiply, <span class="num">3</span>);
+
+double(<span class="num">5</span>);  <span class="cm">// → 10</span>
+triple(<span class="num">5</span>);  <span class="cm">// → 15</span>
+
+<span class="cm">// Real-world: API caller cấu hình sẵn</span>
+<span class="kw">const</span> getUser  = <span class="fn">partial</span>(apiCall, <span class="str">'GET'</span>,  <span class="str">'/users'</span>);
+<span class="kw">const</span> postUser = <span class="fn">partial</span>(apiCall, <span class="str">'POST'</span>, <span class="str">'/users'</span>);</div>
+
+  <!-- 1.6 Memoization -->
+  <h3 class="section-title" id="memo">1.6 Memoization &amp; Revealing Module Pattern</h3>
+  <span class="badge badge-red">Nâng cao</span>
+
+  <div class="code-block">
+<span class="cm">// Memoization — cache kết quả tính toán</span>
+<span class="kw">function</span> <span class="fn">memoize</span>(fn) {
+  <span class="kw">const</span> cache = <span class="kw">new</span> Map(); <span class="cm">// closure giữ cache sống mãi</span>
+
+  <span class="kw">return function</span>(...args) {
+    <span class="kw">const</span> key = JSON.<span class="fn">stringify</span>(args);
+    <span class="kw">if</span> (cache.<span class="fn">has</span>(key)) {
+      <span class="kw">return</span> cache.<span class="fn">get</span>(key); <span class="cm">// cache hit — trả ngay!</span>
+    }
+    <span class="kw">const</span> result = fn(...args);
+    cache.<span class="fn">set</span>(key, result);
+    <span class="kw">return</span> result;
+  };
+}
+
+<span class="kw">const</span> expensiveFib = <span class="fn">memoize</span>(<span class="kw">function</span> fib(n) {
+  <span class="kw">return</span> n &lt;= <span class="num">1</span> ? n : <span class="fn">expensiveFib</span>(n-<span class="num">1</span>) + <span class="fn">expensiveFib</span>(n-<span class="num">2</span>);
+});
+
+console.<span class="fn">log</span>(<span class="fn">expensiveFib</span>(<span class="num">40</span>)); <span class="cm">// lần đầu: tính</span>
+console.<span class="fn">log</span>(<span class="fn">expensiveFib</span>(<span class="num">40</span>)); <span class="cm">// lần sau: cache hit, tức thì!</span></div>
+
+  <div class="code-block">
+<span class="cm">// Revealing Module Pattern — tạo module với public/private API</span>
+<span class="kw">const</span> BankAccount = (() => {
+  <span class="kw">let</span> balance = <span class="num">0</span>;         <span class="cm">// PRIVATE</span>
+  <span class="kw">const</span> history = [];       <span class="cm">// PRIVATE</span>
+
+  <span class="kw">function</span> <span class="fn">validate</span>(amount) {
+    <span class="kw">if</span> (amount &lt;= <span class="num">0</span>) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Số tiền không hợp lệ'</span>);
+  }
+
+  <span class="kw">return</span> {                   <span class="cm">// PUBLIC interface</span>
+    <span class="fn">deposit</span>(amount) {
+      <span class="fn">validate</span>(amount);
+      balance += amount;
+      history.<span class="fn">push</span>({ type: <span class="str">'+'</span>, amount, balance });
+    },
+    <span class="fn">withdraw</span>(amount) {
+      <span class="fn">validate</span>(amount);
+      <span class="kw">if</span> (amount > balance) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Không đủ tiền'</span>);
+      balance -= amount;
+      history.<span class="fn">push</span>({ type: <span class="str">'-'</span>, amount, balance });
+    },
+    <span class="fn">getBalance</span>: () => balance,
+    <span class="fn">getHistory</span>: () => [...history] <span class="cm">// trả bản sao — không expose trực tiếp</span>
+  };
+})(); <span class="cm">// IIFE — gọi ngay</span>
+
+BankAccount.<span class="fn">deposit</span>(<span class="num">1000000</span>);
+BankAccount.<span class="fn">withdraw</span>(<span class="num">300000</span>);
+BankAccount.<span class="fn">getBalance</span>(); <span class="cm">// → 700000</span>
+BankAccount.balance;        <span class="cm">// → undefined — không thể truy cập!</span></div>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════════════════════ MODULE 2 ═══ -->
+  <div class="module-badge"><div class="dot" style="background:var(--blue)"></div>Module 2</div>
+  <h2 class="module-title" id="module2">Promise &amp; Async</h2>
+
+  <!-- 2.1 Event Loop -->
+  <h3 class="section-title" id="eventloop">2.1 Event Loop — Trái tim của JavaScript Async</h3>
+  <span class="badge badge-green">Cơ bản</span>
+  <p>JavaScript là <strong>single-threaded</strong> — chỉ làm một việc tại một thời điểm. Event Loop là cơ chế phối hợp giữa Call Stack, Microtask Queue, và Macrotask Queue để xử lý async code.</p>
+
+  <div class="code-block">
+console.<span class="fn">log</span>(<span class="str">'1 - sync'</span>);
+setTimeout(() => console.<span class="fn">log</span>(<span class="str">'2 - macro'</span>), <span class="num">0</span>);
+Promise.<span class="fn">resolve</span>().<span class="fn">then</span>(() => console.<span class="fn">log</span>(<span class="str">'3 - micro'</span>));
+console.<span class="fn">log</span>(<span class="str">'4 - sync'</span>);
+
+<span class="cm">// Output: 1 → 4 → 3 → 2</span>
+<span class="cm">// Tại sao? Thứ tự ưu tiên: Sync → Microtask → Macrotask</span></div>
+
+  <table>
+    <tr><th>Bước</th><th>Hành động</th><th>Call Stack</th><th>Micro Queue</th><th>Macro Queue</th><th>Output</th></tr>
+    <tr><td>1</td><td>log('1')</td><td>[log]</td><td>[]</td><td>[]</td><td>1</td></tr>
+    <tr><td>2</td><td>setTimeout</td><td>[setTimeout]</td><td>[]</td><td>[cb_2]</td><td></td></tr>
+    <tr><td>3</td><td>Promise.then</td><td>[then]</td><td>[cb_3]</td><td>[cb_2]</td><td></td></tr>
+    <tr><td>4</td><td>log('4')</td><td>[log]</td><td>[cb_3]</td><td>[cb_2]</td><td>4</td></tr>
+    <tr><td>5</td><td>Stack trống → chạy Micro</td><td>[cb_3]</td><td>[]</td><td>[cb_2]</td><td>3</td></tr>
+    <tr><td>6</td><td>Micro trống → chạy Macro</td><td>[cb_2]</td><td>[]</td><td>[]</td><td>2</td></tr>
+  </table>
+
+  <div class="note note-purple">
+    <strong>Quy tắc vàng:</strong> Microtask Queue (Promise .then, queueMicrotask, MutationObserver) luôn được drain hoàn toàn <em>trước</em> khi Event Loop lấy task tiếp theo từ Macrotask Queue (setTimeout, setInterval, I/O events).
+  </div>
+
+  <!-- 2.2 Callback Hell -->
+  <h3 class="section-title" id="callback-hell">2.2 Callback Hell — Vấn đề cần giải quyết</h3>
+  <span class="badge badge-green">Cơ bản</span>
+
+  <div class="compare-grid">
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--red)">❌ Callback Hell — "Pyramid of Doom"</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+<span class="fn">getUser</span>(id, <span class="kw">function</span>(err, user) {
+  <span class="kw">if</span> (err) <span class="kw">throw</span> err;
+  <span class="fn">getPosts</span>(user.id, <span class="kw">function</span>(err, posts) {
+    <span class="kw">if</span> (err) <span class="kw">throw</span> err;
+    <span class="fn">getComments</span>(posts[<span class="num">0</span>].id, <span class="kw">function</span>(err, comments) {
+      <span class="kw">if</span> (err) <span class="kw">throw</span> err;
+      <span class="fn">saveLog</span>(comments, <span class="kw">function</span>(err) {
+        <span class="kw">if</span> (err) <span class="kw">throw</span> err;
+        <span class="cm">// ... tiếp tục sâu hơn</span>
+      });
+    });
+  });
+});</div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--green)">✅ async/await — Đọc như code đồng bộ</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+<span class="kw">async function</span> <span class="fn">loadData</span>(id) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> user     = <span class="kw">await</span> <span class="fn">getUser</span>(id);
+    <span class="kw">const</span> posts    = <span class="kw">await</span> <span class="fn">getPosts</span>(user.id);
+    <span class="kw">const</span> comments = <span class="kw">await</span> <span class="fn">getComments</span>(posts[<span class="num">0</span>].id);
+    <span class="kw">await</span> <span class="fn">saveLog</span>(comments);
+  } <span class="kw">catch</span> (err) {
+    <span class="cm">// Một chỗ xử lý tất cả lỗi</span>
+    console.<span class="fn">error</span>(err);
+  }
+}</div>
+    </div>
+  </div>
+
+  <!-- 2.3 Promise Core -->
+  <h3 class="section-title" id="promise-core">2.3 Promise — 3 Trạng thái</h3>
+  <span class="badge badge-amber">Trung cấp</span>
+  <p>Một Promise là object đại diện cho một <strong>giá trị chưa có ngay</strong>. Nó có đúng 3 trạng thái và chỉ chuyển trạng thái <strong>một lần duy nhất</strong>, không thể quay lại.</p>
+
+  <div class="card">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;padding:14px;background:var(--amber-bg);border:1px solid rgba(245,185,66,0.2);border-radius:var(--r);text-align:center;">
+        <div style="font-size:13px;font-weight:500;color:var(--amber);margin-bottom:4px;">⏳ Pending</div>
+        <div style="font-size:12px;color:var(--text3);">Đang chờ — không thể đọc value</div>
+      </div>
+      <div style="color:var(--text3);font-size:20px;text-align:center;">→</div>
+      <div style="flex:1;min-width:140px;padding:14px;background:var(--green-bg);border:1px solid rgba(74,222,154,0.2);border-radius:var(--r);text-align:center;">
+        <div style="font-size:13px;font-weight:500;color:var(--green);margin-bottom:4px;">✅ Fulfilled</div>
+        <div style="font-size:12px;color:var(--text3);">resolve(value) — .then() chạy</div>
+      </div>
+      <div style="color:var(--text3);font-size:12px;margin-top:16px;text-align:center;">hoặc</div>
+      <div style="flex:1;min-width:140px;padding:14px;background:var(--red-bg);border:1px solid rgba(244,96,96,0.2);border-radius:var(--r);text-align:center;">
+        <div style="font-size:13px;font-weight:500;color:var(--red);margin-bottom:4px;">❌ Rejected</div>
+        <div style="font-size:12px;color:var(--text3);">reject(error) — .catch() chạy</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="cm">// Tạo Promise thủ công</span>
+<span class="kw">const</span> p = <span class="kw">new</span> <span class="fn">Promise</span>((resolve, reject) => {
+  setTimeout(() => {
+    <span class="kw">const</span> ok = Math.<span class="fn">random</span>() > <span class="num">0.5</span>;
+    <span class="kw">if</span> (ok) <span class="fn">resolve</span>(<span class="str">'Thành công!'</span>);
+    <span class="kw">else</span>   <span class="fn">reject</span>(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Thất bại!'</span>));
+  }, <span class="num">1000</span>);
+});
+
+<span class="cm">// .then() / .catch() / .finally()</span>
+p
+  .<span class="fn">then</span>(value => {
+    console.<span class="fn">log</span>(<span class="str">'OK:'</span>, value);
+    <span class="kw">return</span> <span class="fn">doNextThing</span>(value); <span class="cm">// có thể chain tiếp</span>
+  })
+  .<span class="fn">catch</span>(err => {
+    console.<span class="fn">error</span>(<span class="str">'Lỗi:'</span>, err.message);
+  })
+  .<span class="fn">finally</span>(() => {
+    console.<span class="fn">log</span>(<span class="str">'Luôn chạy — dù thành công hay thất bại'</span>);
+  });
+
+<span class="cm">// ⚠️ Quan trọng: fetch() không tự throw khi HTTP 4xx/5xx!</span>
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/users'</span>);
+<span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP Error: <span class="kw">${</span>res.status<span class="kw">}</span>`</span>); <span class="cm">// phải tự check!</span>
+<span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();</div>
+
+  <!-- 2.4 Combinators -->
+  <h3 class="section-title" id="combinators">2.4 Promise Combinators</h3>
+  <span class="badge badge-red">Nâng cao</span>
+
+  <table>
+    <tr><th>Method</th><th>Resolve khi</th><th>Reject khi</th><th>Dùng cho</th></tr>
+    <tr><td><code>Promise.all()</code></td><td>TẤT CẢ fulfilled</td><td>BẤT KỲ 1 rejected</td><td>Load dashboard — cần tất cả data</td></tr>
+    <tr><td><code>Promise.allSettled()</code></td><td>TẤT CẢ settled (bất kể kết quả)</td><td>Không bao giờ reject</td><td>Gửi email hàng loạt — muốn biết cái nào fail</td></tr>
+    <tr><td><code>Promise.race()</code></td><td>Cái đầu tiên (fulfilled hoặc rejected)</td><td>Cái đầu tiên rejected</td><td>Implement timeout cho fetch request</td></tr>
+    <tr><td><code>Promise.any()</code></td><td>Cái đầu tiên FULFILLED</td><td>TẤT CẢ rejected (AggregateError)</td><td>CDN fallback — thử nhiều nguồn, lấy cái nhanh nhất</td></tr>
+  </table>
+
+  <div class="code-block">
+<span class="cm">// Promise.all — song song, cần tất cả</span>
+<span class="kw">const</span> [users, posts, tags] = <span class="kw">await</span> Promise.<span class="fn">all</span>([
+  <span class="fn">getUsers</span>(),   <span class="cm">// 1s</span>
+  <span class="fn">getPosts</span>(),   <span class="cm">// 2s</span>
+  <span class="fn">getTags</span>()     <span class="cm">// 0.5s  → Tổng: max = 2s (không phải 3.5s!)</span>
+]);
+
+<span class="cm">// Promise.allSettled — biết kết quả từng cái dù fail</span>
+<span class="kw">const</span> results = <span class="kw">await</span> Promise.<span class="fn">allSettled</span>([p1, p2, p3]);
+results.<span class="fn">forEach</span>(r => {
+  <span class="kw">if</span> (r.status === <span class="str">'fulfilled'</span>) console.<span class="fn">log</span>(<span class="str">'OK:'</span>, r.value);
+  <span class="kw">else</span>                              console.<span class="fn">error</span>(<span class="str">'Lỗi:'</span>, r.reason);
+});
+
+<span class="cm">// Promise.race — implement timeout</span>
+<span class="kw">const</span> timeout = <span class="kw">new</span> <span class="fn">Promise</span>((_, reject) =>
+  setTimeout(() => reject(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Timeout 5s'</span>)), <span class="num">5000</span>)
+);
+<span class="kw">const</span> result = <span class="kw">await</span> Promise.<span class="fn">race</span>([<span class="fn">fetchData</span>(), timeout]);
+
+<span class="cm">// Promise.any — CDN fallback</span>
+<span class="kw">const</span> data = <span class="kw">await</span> Promise.<span class="fn">any</span>([
+  <span class="fn">fetchFromServer1</span>(),
+  <span class="fn">fetchFromServer2</span>(),
+  <span class="fn">fetchFromCache</span>()
+]);</div>
+
+  <!-- 2.5 async/await -->
+  <h3 class="section-title" id="async-await">2.5 async / await — Chuyên Sâu</h3>
+  <span class="badge badge-red">Nâng cao</span>
+  <p><code>async/await</code> là <strong>syntactic sugar</strong> — bên dưới vẫn là Promise. Một <code>async function</code> luôn trả về Promise. <code>await</code> không block JS engine — nó nhường control về Event Loop và đăng ký phần còn lại vào Microtask Queue.</p>
+
+  <div class="code-block">
+<span class="cm">// Cơ chế: await nhường control</span>
+<span class="kw">async function</span> <span class="fn">demo</span>() {
+  console.<span class="fn">log</span>(<span class="str">'A'</span>);               <span class="cm">// sync</span>
+  <span class="kw">await</span> Promise.<span class="fn">resolve</span>();       <span class="cm">// nhường control về Event Loop</span>
+  console.<span class="fn">log</span>(<span class="str">'C'</span>);               <span class="cm">// chạy sau B!</span>
+}
+<span class="fn">demo</span>();
+console.<span class="fn">log</span>(<span class="str">'B'</span>);                 <span class="cm">// chạy trước C</span>
+<span class="cm">// Output: A → B → C</span></div>
+
+  <h4 class="sub-title">Error Handling đúng chuẩn</h4>
+  <div class="compare-grid">
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--red)">❌ 3 lỗi phổ biến</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+<span class="cm">// Lỗi 1: không catch</span>
+<span class="kw">async function</span> <span class="fn">bad1</span>() {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api'</span>);
+} <span class="cm">// 💥 UnhandledPromiseRejection</span>
+
+<span class="cm">// Lỗi 2: nuốt lỗi</span>
+<span class="kw">async function</span> <span class="fn">bad2</span>() {
+  <span class="kw">try</span> { <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api'</span>); }
+  <span class="kw">catch</span> (e) { console.<span class="fn">log</span>(e); }
+  <span class="cm">// caller không biết có lỗi!</span>
+}
+
+<span class="cm">// Lỗi 3: return (thiếu await)</span>
+<span class="kw">async function</span> <span class="fn">bad3</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">return</span> <span class="fn">fetch</span>(<span class="str">'/api'</span>); <span class="cm">// thiếu await!</span>
+  } <span class="kw">catch</span> (e) { <span class="cm">// không catch được lỗi từ fetch!</span> }
+}</div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--green)">✅ Đúng chuẩn</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+<span class="kw">async function</span> <span class="fn">fetchUser</span>(id) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/users/<span class="kw">${</span>id<span class="kw">}</span>`</span>);
+
+    <span class="cm">// fetch() chỉ reject khi network lỗi</span>
+    <span class="cm">// HTTP 404/500 vẫn resolve! Phải tự check:</span>
+    <span class="kw">if</span> (!res.ok)
+      <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP <span class="kw">${</span>res.status<span class="kw">}</span>`</span>);
+
+    <span class="kw">return await</span> res.<span class="fn">json</span>(); <span class="cm">// return AWAIT!</span>
+  } <span class="kw">catch</span> (err) {
+    console.<span class="fn">error</span>(<span class="str">'fetchUser:'</span>, err);
+    <span class="kw">throw</span> err; <span class="cm">// rethrow cho caller!</span>
+  }
+}</div>
+    </div>
+  </div>
+
+  <h4 class="sub-title">Sequential vs Parallel — Sai lầm tốn kém nhất</h4>
+  <div class="compare-grid">
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--red)">❌ Sequential — lãng phí 4.5s</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+<span class="kw">async function</span> <span class="fn">loadSlow</span>() {
+  <span class="kw">const</span> user  = <span class="kw">await</span> <span class="fn">getUser</span>();  <span class="cm">// 1s</span>
+  <span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">getPosts</span>(); <span class="cm">// 2s</span>
+  <span class="kw">const</span> tags  = <span class="kw">await</span> <span class="fn">getTags</span>();  <span class="cm">// 1.5s</span>
+  <span class="cm">// Tổng: 4.5s — dù không liên quan nhau!</span>
+}</div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--green)">✅ Parallel — chỉ 2s</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+<span class="kw">async function</span> <span class="fn">loadFast</span>() {
+  <span class="kw">const</span> [user, posts, tags] =
+    <span class="kw">await</span> Promise.<span class="fn">all</span>([
+      <span class="fn">getUser</span>(),
+      <span class="fn">getPosts</span>(),
+      <span class="fn">getTags</span>()
+    ]);
+  <span class="cm">// Tổng: max(1, 2, 1.5) = 2s</span>
+}</div>
+    </div>
+  </div>
+
+  <h4 class="sub-title">Pitfalls — await trong forEach</h4>
+  <div class="code-block">
+<span class="kw">const</span> ids = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+
+<span class="cm">// ❌ forEach KHÔNG await — tất cả chạy song song, thứ tự không đảm bảo:</span>
+ids.<span class="fn">forEach</span>(<span class="kw">async</span> (id) => {
+  <span class="kw">const</span> u = <span class="kw">await</span> <span class="fn">getUser</span>(id);
+  console.<span class="fn">log</span>(u); <span class="cm">// thứ tự ngẫu nhiên!</span>
+});
+
+<span class="cm">// ✅ for...of — await tuần tự đúng thứ tự:</span>
+<span class="kw">for</span> (<span class="kw">const</span> id <span class="kw">of</span> ids) {
+  <span class="kw">const</span> u = <span class="kw">await</span> <span class="fn">getUser</span>(id);
+  console.<span class="fn">log</span>(u); <span class="cm">// 1 → 2 → 3 đúng thứ tự</span>
+}
+
+<span class="cm">// ✅ map + Promise.all — song song nhưng giữ thứ tự:</span>
+<span class="kw">const</span> users = <span class="kw">await</span> Promise.<span class="fn">all</span>(ids.<span class="fn">map</span>(id => <span class="fn">getUser</span>(id)));
+console.<span class="fn">log</span>(users); <span class="cm">// [User1, User2, User3] đúng thứ tự, chạy song song</span></div>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════════════════════ MODULE 3 ═══ -->
+  <div class="module-badge"><div class="dot" style="background:var(--teal)"></div>Module 3</div>
+  <h2 class="module-title" id="module3">Thực chiến</h2>
+
+  <!-- 3.1 Closure trong Async -->
+  <h3 class="section-title" id="closure-async">3.1 Closure trong Async — Race Condition &amp; Stale Closure</h3>
+  <span class="badge badge-red">Nâng cao</span>
+  <p>Đây là bug tinh vi nhất — xảy ra khi closure "giữ" một biến nhưng biến đó thay đổi trước khi async hoàn thành.</p>
+
+  <h4 class="sub-title">Stale Closure Bug</h4>
+  <div class="code-block">
+<span class="cm">// ❌ Bug: closure capture giá trị tại thời điểm tạo</span>
+<span class="kw">function</span> <span class="fn">setupAutoSave</span>() {
+  <span class="kw">let</span> count = <span class="num">0</span>;
+
+  setInterval(<span class="kw">async</span> () => {
+    <span class="cm">// await saveToServer() mất 500ms</span>
+    <span class="kw">await</span> <span class="fn">saveToServer</span>(count); <span class="cm">// count có thể đã thay đổi khi await xong!</span>
+  }, <span class="num">1000</span>);
+
+  document.onclick = () => count++;
+}
+
+<span class="cm">// ✅ Fix: dùng ref object — closure capture REFERENCE, không phải value</span>
+<span class="kw">function</span> <span class="fn">setupAutoSaveFixed</span>() {
+  <span class="kw">const</span> state = { count: <span class="num">0</span> }; <span class="cm">// Object reference không bị stale!</span>
+
+  setInterval(<span class="kw">async</span> () => {
+    <span class="kw">await</span> <span class="fn">saveToServer</span>(state.count); <span class="cm">// luôn đọc giá trị mới nhất</span>
+  }, <span class="num">1000</span>);
+
+  document.onclick = () => state.count++;
+}</div>
+
+  <h4 class="sub-title">Race Condition — Request cũ về sau request mới</h4>
+  <div class="compare-grid">
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--red)">❌ Race Condition</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+<span class="kw">async function</span> <span class="fn">search</span>(query) {
+  <span class="kw">const</span> results = <span class="kw">await</span> <span class="fn">fetchSearch</span>(query);
+  <span class="cm">// "cat" chậm hơn "cats"</span>
+  <span class="cm">// → "cats" hiện kết quả đúng</span>
+  <span class="cm">// → "cat" về sau, ghi đè = sai!</span>
+  <span class="fn">showResults</span>(results); <span class="cm">// 💥</span>
+}</div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-head" style="color:var(--green)">✅ Fix 1 — AbortController</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+<span class="kw">let</span> controller = <span class="kw">null</span>;
+<span class="kw">async function</span> <span class="fn">searchFixed</span>(query) {
+  controller?.<span class="fn">abort</span>(); <span class="cm">// huỷ request trước</span>
+  controller = <span class="kw">new</span> <span class="fn">AbortController</span>();
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url, {
+      signal: controller.signal
+    });
+    <span class="fn">showResults</span>(<span class="kw">await</span> res.<span class="fn">json</span>());
+  } <span class="kw">catch</span> (e) {
+    <span class="kw">if</span> (e.name !== <span class="str">'AbortError'</span>) <span class="kw">throw</span> e;
+  }
+}</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<span class="cm">// ✅ Fix 2 — Request ID pattern (dùng closure)</span>
+<span class="kw">let</span> latestId = <span class="num">0</span>; <span class="cm">// closure variable</span>
+
+<span class="kw">async function</span> <span class="fn">searchFixed2</span>(query) {
+  <span class="kw">const</span> thisId = ++latestId; <span class="cm">// capture ID tại thời điểm gọi</span>
+
+  <span class="kw">const</span> results = <span class="kw">await</span> <span class="fn">fetchSearch</span>(query);
+
+  <span class="cm">// Chỉ hiển thị nếu đây vẫn là request mới nhất:</span>
+  <span class="kw">if</span> (thisId === latestId) {
+    <span class="fn">showResults</span>(results); <span class="cm">// ✅ an toàn</span>
+  }
+  <span class="cm">// Request cũ hơn → latestId đã tăng → âm thầm bỏ qua</span>
+}</div>
+
+  <div class="note note-purple">
+    <strong>Tại sao Fix 2 hoạt động?</strong> <code>thisId</code> được capture (closure) tại thời điểm mỗi lần gọi <code>search()</code>. Sau khi await xong, so sánh với <code>latestId</code> — nếu đã có request mới hơn, <code>latestId</code> đã tăng lên và request cũ biết mình "lỗi thời" rồi tự bỏ qua.
+  </div>
+
+  <!-- 3.2 Retry Pattern -->
+  <h3 class="section-title" id="retry">3.2 Retry Pattern với Exponential Backoff</h3>
+  <span class="badge badge-red">Nâng cao</span>
+
+  <div class="code-block">
+<span class="kw">function</span> <span class="fn">withRetry</span>(fn, maxRetries = <span class="num">3</span>, baseDelay = <span class="num">100</span>) {
+  <span class="kw">return async function</span>(...args) {     <span class="cm">// closure giữ fn, maxRetries, baseDelay</span>
+    <span class="kw">let</span> attempt = <span class="num">0</span>;
+
+    <span class="kw">while</span> (attempt &lt; maxRetries) {
+      <span class="kw">try</span> {
+        <span class="kw">return await</span> fn(...args);       <span class="cm">// thành công → trả kết quả</span>
+      } <span class="kw">catch</span> (err) {
+        attempt++;
+        <span class="kw">if</span> (attempt === maxRetries) <span class="kw">throw</span> err; <span class="cm">// hết lần thử → throw</span>
+
+        <span class="cm">// Exponential backoff: 100ms → 200ms → 400ms → ...</span>
+        <span class="kw">const</span> delay = Math.<span class="fn">pow</span>(<span class="num">2</span>, attempt) * baseDelay;
+        <span class="kw">await new</span> <span class="fn">Promise</span>(r => setTimeout(r, delay));
+      }
+    }
+  };
+}
+
+<span class="cm">// Sử dụng:</span>
+<span class="kw">const</span> fetchWithRetry = <span class="fn">withRetry</span>(fetch, <span class="num">3</span>);
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetchWithRetry</span>(<span class="str">'/api/users'</span>);</div>
+
+  <!-- 3.3 Debounce & Throttle -->
+  <h3 class="section-title" id="debounce-throttle">3.3 Debounce &amp; Throttle từ đầu</h3>
+  <span class="badge badge-red">Nâng cao</span>
+
+  <div class="note note-amber">
+    <strong>Quy tắc phân biệt:</strong> <strong>Debounce</strong> = "chờ yên X ms rồi mới chạy" (mỗi lần gọi reset timer). <strong>Throttle</strong> = "tối đa chạy 1 lần mỗi X ms" (bỏ qua nếu chưa đủ thời gian).
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-box">
+      <div class="compare-head">⏳ Debounce — chờ yên rồi mới chạy</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+<span class="kw">function</span> <span class="fn">debounce</span>(fn, delay) {
+  <span class="kw">let</span> timer;                <span class="cm">// closure!</span>
+  <span class="kw">return function</span>(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.<span class="fn">apply</span>(<span class="kw">this</span>, args);
+    }, delay);
+  };
+}
+
+<span class="cm">// Dùng cho: search input, form validation</span>
+<span class="kw">const</span> onSearch = <span class="fn">debounce</span>(
+  (q) => <span class="fn">callAPI</span>(q),
+  <span class="num">500</span>
+);
+<span class="cm">// Gõ liên tục → chỉ gọi 1 lần sau 500ms yên</span></div>
+    </div>
+    <div class="compare-box">
+      <div class="compare-head">⏱ Throttle — tối đa 1 lần/Xms</div>
+      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+<span class="kw">function</span> <span class="fn">throttle</span>(fn, limit) {
+  <span class="kw">let</span> lastRun = <span class="num">0</span>;        <span class="cm">// closure!</span>
+  <span class="kw">return function</span>(...args) {
+    <span class="kw">const</span> now = Date.<span class="fn">now</span>();
+    <span class="kw">if</span> (now - lastRun >= limit) {
+      lastRun = now;
+      fn.<span class="fn">apply</span>(<span class="kw">this</span>, args);
+    }
+    <span class="cm">// chưa đủ thời gian → bỏ qua</span>
+  };
+}
+
+<span class="cm">// Dùng cho: scroll, resize, mouse move</span>
+<span class="kw">const</span> onScroll = <span class="fn">throttle</span>(
+  () => <span class="fn">updateUI</span>(),
+  <span class="num">300</span>
+);
+<span class="cm">// Scroll liên tục → chạy tối đa 3.3 lần/giây</span></div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Tình huống</th><th>Dùng gì</th><th>Lý do</th></tr>
+    <tr><td>Search input, autocomplete</td><td>Debounce</td><td>Chờ user gõ xong mới gọi API</td></tr>
+    <tr><td>Form validation</td><td>Debounce</td><td>Validate sau khi user dừng nhập</td></tr>
+    <tr><td>Window scroll handler</td><td>Throttle</td><td>Update UI đều đặn, không bỏ sót</td></tr>
+    <tr><td>Window resize</td><td>Throttle hoặc Debounce</td><td>Throttle nếu cần cập nhật liên tục; Debounce nếu chỉ cần kết quả cuối</td></tr>
+    <tr><td>Mouse move / drag</td><td>Throttle</td><td>Cần update đều, không bỏ sót frame</td></tr>
+    <tr><td>Nút Submit / Save</td><td>Debounce</td><td>Tránh double-submit</td></tr>
+    <tr><td>Realtime analytics tracking</td><td>Throttle</td><td>Gửi event đều đặn, không spam</td></tr>
+  </table>
+
+  <!-- 3.4 LRU Cache -->
+  <h3 class="section-title" id="lru-cache">3.4 LRU Cache với TTL — Implementation Đúng</h3>
+  <span class="badge badge-red">Nâng cao</span>
+
+  <div class="note note-red">
+    <strong>Lỗi phổ biến khi implement LRU:</strong> Dùng Map nhưng không <em>promote</em> key sau mỗi lần <code>get()</code> hoặc <code>set()</code> → thực chất là FIFO, không phải LRU. JavaScript Map giữ thứ tự insertion, vì vậy: delete rồi re-insert = move về cuối (MRU).
+  </div>
+
+  <div class="code-block">
+<span class="kw">function</span> <span class="fn">createCache</span>({ ttl = <span class="num">10000</span>, maxSize = <span class="num">100</span> } = {}) {
+  <span class="kw">const</span> store = <span class="kw">new</span> Map(); <span class="cm">// CLOSURE — private, không ai truy cập trực tiếp</span>
+  <span class="kw">let</span> hits = <span class="num">0</span>, misses = <span class="num">0</span>;
+
+  <span class="kw">const</span> <span class="fn">isExpired</span> = e => Date.<span class="fn">now</span>() - e.createdAt > ttl;
+
+  <span class="cm">// ✅ Promote = delete + re-insert = key về cuối Map (MRU)</span>
+  <span class="kw">function</span> <span class="fn">promote</span>(key) {
+    <span class="kw">const</span> entry = store.<span class="fn">get</span>(key);
+    store.<span class="fn">delete</span>(key);
+    store.<span class="fn">set</span>(key, entry); <span class="cm">// về cuối = MRU</span>
+  }
+
+  <span class="kw">return</span> {
+    <span class="fn">get</span>(key) {
+      <span class="kw">const</span> e = store.<span class="fn">get</span>(key);
+      <span class="kw">if</span> (!e || <span class="fn">isExpired</span>(e)) {
+        store.<span class="fn">delete</span>(key);
+        misses++;
+        <span class="kw">return null</span>; <span class="cm">// miss hoặc expired</span>
+      }
+      <span class="fn">promote</span>(key); <span class="cm">// ✅ Cốt lõi LRU: move lên MRU sau mỗi get()</span>
+      hits++;
+      <span class="kw">return</span> e.value;
+    },
+
+    <span class="fn">set</span>(key, value) {
+      <span class="kw">if</span> (store.<span class="fn">has</span>(key)) {
+        store.<span class="fn">delete</span>(key); <span class="cm">// ✅ Xoá vị trí cũ để re-insert về MRU</span>
+      } <span class="kw">else if</span> (store.size >= maxSize) {
+        <span class="cm">// ✅ Evict đúng LRU = phần tử đầu tiên của Map</span>
+        <span class="kw">const</span> lruKey = store.<span class="fn">keys</span>().<span class="fn">next</span>().value;
+        store.<span class="fn">delete</span>(lruKey);
+      }
+      store.<span class="fn">set</span>(key, { value, createdAt: Date.<span class="fn">now</span>() });
+    },
+
+    <span class="fn">invalidate</span>(key) { store.<span class="fn">delete</span>(key); },
+
+    <span class="fn">clear</span>() {
+      store.<span class="fn">clear</span>();
+      hits = <span class="num">0</span>; misses = <span class="num">0</span>; <span class="cm">// ✅ Reset stats — lỗi hay quên!</span>
+    },
+
+    <span class="fn">stats</span>: () => ({
+      size:    store.size,
+      hits,
+      misses,
+      hitRate: hits + misses === <span class="num">0</span>
+        ? <span class="num">0</span>
+        : Math.<span class="fn">round</span>(hits / (hits + misses) * <span class="num">100</span>)
+    })
+  };
+}
+
+<span class="cm">// ── Sử dụng ──────────────────────────────────────</span>
+<span class="kw">const</span> cache = <span class="fn">createCache</span>({ ttl: <span class="num">5000</span>, maxSize: <span class="num">3</span> });
+
+cache.<span class="fn">set</span>(<span class="str">'A'</span>, <span class="str">'Alpha'</span>);  <span class="cm">// Map: [A]       A=MRU</span>
+cache.<span class="fn">set</span>(<span class="str">'B'</span>, <span class="str">'Beta'</span>);   <span class="cm">// Map: [A, B]    B=MRU</span>
+cache.<span class="fn">set</span>(<span class="str">'C'</span>, <span class="str">'Gamma'</span>);  <span class="cm">// Map: [A, B, C] C=MRU, A=LRU</span>
+cache.<span class="fn">get</span>(<span class="str">'A'</span>);            <span class="cm">// HIT + promote → Map: [B, C, A] A=MRU</span>
+cache.<span class="fn">set</span>(<span class="str">'D'</span>, <span class="str">'Delta'</span>);  <span class="cm">// Map đầy! Evict LRU=B → Map: [C, A, D]</span>
+cache.<span class="fn">get</span>(<span class="str">'B'</span>);            <span class="cm">// null — B đã bị evict!</span>
+cache.<span class="fn">stats</span>();             <span class="cm">// { size: 3, hits: 1, misses: 1, hitRate: 50 }</span></div>
+
+  <div class="note note-purple">
+    <strong>Tại sao Map là cấu trúc hoàn hảo cho LRU?</strong> JavaScript Map <em>bảo toàn thứ tự insertion</em> theo chuẩn ES2015+. Sau <code>delete</code> + <code>set</code>, key đó nằm ở cuối iterator. Vì vậy: đầu Map = LRU (ít dùng nhất), cuối Map = MRU (vừa dùng). Không cần Doubly Linked List như LRU trong Java/C++!
+  </div>
+
+  <hr class="divider">
+
+  <!-- INTERVIEW SECTION -->
+  <h2 class="module-title" id="interview" style="margin-top:3rem;border-top:none">Câu hỏi Phỏng vấn</h2>
+
+  <table>
+    <tr><th>Câu hỏi</th><th>Điểm cốt lõi cần trả lời</th></tr>
+    <tr>
+      <td>"Closure là gì?"</td>
+      <td>Function + lexical environment. Giải thích bằng ví dụ counter. Đề cập Closure Environment tồn tại dù outer function đã kết thúc.</td>
+    </tr>
+    <tr>
+      <td>"Tại sao var trong for loop gây bug?"</td>
+      <td>var không có block scope → tất cả function closure over cùng 1 biến i. 3 cách fix: let, IIFE, factory function.</td>
+    </tr>
+    <tr>
+      <td>"Event Loop hoạt động thế nào?"</td>
+      <td>Single thread. Thứ tự: Sync → Microtask Queue → Macrotask Queue. Promise .then là microtask, setTimeout là macrotask.</td>
+    </tr>
+    <tr>
+      <td>"Promise.all vs allSettled?"</td>
+      <td>all: fail-fast (1 fail → all fail). allSettled: luôn resolve, báo kết quả từng cái. Dùng all khi cần tất cả; allSettled khi muốn biết cái nào fail.</td>
+    </tr>
+    <tr>
+      <td>"async/await có phải Promise không?"</td>
+      <td>Syntactic sugar. async fn luôn trả Promise. await nhường control về Event Loop (không block thread). return await trong try/catch khác return.</td>
+    </tr>
+    <tr>
+      <td>"Implement debounce từ đầu?"</td>
+      <td>Closure giữ timer. Mỗi lần gọi: clearTimeout(timer), đặt timer mới. Phải giải thích tại sao closure cần thiết ở đây.</td>
+    </tr>
+    <tr>
+      <td>"Race condition trong async là gì?"</td>
+      <td>Request cũ về sau request mới, ghi đè kết quả sai. Fix: AbortController hoặc Request ID pattern dùng closure.</td>
+    </tr>
+    <tr>
+      <td>"LRU Cache hoạt động thế nào?"</td>
+      <td>Map giữ thứ tự insertion. get() phải promote (delete + re-insert). Evict phần tử đầu Map (LRU). TTL check bằng createdAt. clear() phải reset stats.</td>
+    </tr>
+  </table>
+
+  <!-- CHEAT SHEET -->
+  <h2 class="module-title" id="cheatsheet" style="margin-top:3rem;border-top:none">Cheat Sheet</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;color:var(--accent2);margin-bottom:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.05em;">CLOSURE</div>
+      <ul style="list-style:none;font-size:13.5px;color:var(--text2);">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">= function + lexical environment</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Biến sống dù outer fn đã kết thúc</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);"><code>var</code> loop → dùng <code>let</code> hoặc factory</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Mỗi lần gọi factory → closure riêng</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Private state không cần <code>class</code></li>
+        <li style="padding:4px 0;">Stale closure trong async → dùng ref</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.05em;">PROMISE</div>
+      <ul style="list-style:none;font-size:13.5px;color:var(--text2);">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">3 state: pending → fulfilled / rejected</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Chỉ chuyển state 1 lần, không đảo ngược</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">fetch() không throw khi HTTP 4xx/5xx!</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">forEach + async ≠ await tuần tự</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">return await (có await) trong try/catch</li>
+        <li style="padding:4px 0;">Micro trước Macro (Promise trước setTimeout)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.05em;">PATTERNS</div>
+      <ul style="list-style:none;font-size:13.5px;color:var(--text2);">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Debounce: gọi sau khi yên X ms</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Throttle: tối đa 1 lần / X ms</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Memoize: cache theo args (JSON key)</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">LRU: Map, promote = delete+re-insert</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Retry: exponential backoff 2^n * base</li>
+        <li style="padding:4px 0;">Race fix: AbortController / Request ID</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.05em;">COMMON PITFALLS</div>
+      <ul style="list-style:none;font-size:13.5px;color:var(--text2);">
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">var trong loop → FIFO bug</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">await trong forEach → không đúng ý</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">Sequential await khi có thể parallel</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">LRU không promote → thực ra là FIFO</li>
+        <li style="padding:4px 0;border-bottom:1px solid var(--border);">clear() không reset hits/misses</li>
+        <li style="padding:4px 0;">Race condition search → stale result</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Closure &amp; Promise · JavaScript Chuyên Sâu · 14 mục · 3 module</p>
+    <p style="margin-top:4px;">Cơ bản → Trung cấp → Nâng cao</p>
+  </div>
+
+</main>
+
+<script>
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = document.querySelectorAll('[id]');
+
+  function updateNav() {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navItems.forEach(item => {
+      const href = item.getAttribute('href').slice(1);
+      item.classList.toggle('active', href === current);
+    });
+  }
+
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  navItems.forEach(item => {
+    item.addEventListener('click', e => {
+      e.preventDefault();
+      const id = item.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
