@@ -135,6 +135,17 @@
     font-size: 13px; line-height: 1.85;
     overflow-x: auto; margin: 0.75rem 0 1rem;
     position: relative;
+    white-space: pre;
+    tab-size: 2;
+  }
+  .compare-box .code-block {
+    white-space: pre;
+    border-radius: 0;
+    border: none;
+    border-top: none;
+    margin: 0;
+    font-size: 12.5px;
+    overflow-x: auto;
   }
   .code-block .label {
     position: absolute; top: 10px; right: 12px;
@@ -414,7 +425,7 @@ c2();       <span class="cm">// c2 count = 1 — hoàn toàn độc lập!</span
   <div class="compare-grid">
     <div class="compare-box">
       <div class="compare-head" style="color:var(--red)">❌ Sai — dùng var</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+      <div class="code-block">
 <span class="kw">var</span> funcs = [];
 <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
   funcs[i] = <span class="kw">function</span>() {
@@ -427,7 +438,7 @@ funcs[<span class="num">2</span>](); <span class="cm">// → 3</span></div>
     </div>
     <div class="compare-box">
       <div class="compare-head" style="color:var(--green)">✅ Fix 1 — dùng let</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+      <div class="code-block">
 <span class="kw">const</span> funcs = [];
 <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
   funcs[i] = <span class="kw">function</span>() {
@@ -443,7 +454,7 @@ funcs[<span class="num">2</span>](); <span class="cm">// → 2 ✓</span></div>
   <div class="compare-grid">
     <div class="compare-box">
       <div class="compare-head" style="color:var(--green)">✅ Fix 2 — IIFE</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+      <div class="code-block">
 <span class="kw">var</span> funcs = [];
 <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; <span class="num">3</span>; i++) {
   funcs[i] = (<span class="kw">function</span>(j) {
@@ -454,7 +465,7 @@ funcs[<span class="num">2</span>](); <span class="cm">// → 2 ✓</span></div>
     </div>
     <div class="compare-box">
       <div class="compare-head" style="color:var(--green)">✅ Fix 3 — Factory function</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+      <div class="code-block">
 <span class="kw">function</span> <span class="fn">createFunc</span>(n) {
   <span class="kw">return function</span>() { <span class="kw">return</span> n; };
 }
@@ -505,7 +516,7 @@ alice.loginCount; <span class="cm">// → undefined — KHÔNG truy cập đư�
   <div class="compare-grid">
     <div class="compare-box">
       <div class="compare-head" style="color:var(--red)">❌ Class — this binding phức tạp</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+      <div class="code-block">
 <span class="kw">class</span> <span class="fn">Counter</span> {
   <span class="fn">constructor</span>() { <span class="kw">this</span>.n = <span class="num">0</span>; }
   <span class="fn">inc</span>() { <span class="kw">this</span>.n++; }
@@ -517,7 +528,7 @@ inc(); <span class="cm">// 💥 TypeError: this là undefined</span>
     </div>
     <div class="compare-box">
       <div class="compare-head" style="color:var(--green)">✅ Factory — không cần this</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+      <div class="code-block">
 <span class="kw">function</span> <span class="fn">createCounter</span>() {
   <span class="kw">let</span> n = <span class="num">0</span>;
   <span class="kw">return</span> {
@@ -666,7 +677,7 @@ console.<span class="fn">log</span>(<span class="str">'4 - sync'</span>);
   <div class="compare-grid">
     <div class="compare-box">
       <div class="compare-head" style="color:var(--red)">❌ Callback Hell — "Pyramid of Doom"</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+      <div class="code-block">
 <span class="fn">getUser</span>(id, <span class="kw">function</span>(err, user) {
   <span class="kw">if</span> (err) <span class="kw">throw</span> err;
   <span class="fn">getPosts</span>(user.id, <span class="kw">function</span>(err, posts) {
@@ -683,7 +694,7 @@ console.<span class="fn">log</span>(<span class="str">'4 - sync'</span>);
     </div>
     <div class="compare-box">
       <div class="compare-head" style="color:var(--green)">✅ async/await — Đọc như code đồng bộ</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+      <div class="code-block">
 <span class="kw">async function</span> <span class="fn">loadData</span>(id) {
   <span class="kw">try</span> {
     <span class="kw">const</span> user     = <span class="kw">await</span> <span class="fn">getUser</span>(id);
@@ -810,7 +821,7 @@ console.<span class="fn">log</span>(<span class="str">'B'</span>);              
   <div class="compare-grid">
     <div class="compare-box">
       <div class="compare-head" style="color:var(--red)">❌ 3 lỗi phổ biến</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+      <div class="code-block">
 <span class="cm">// Lỗi 1: không catch</span>
 <span class="kw">async function</span> <span class="fn">bad1</span>() {
   <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api'</span>);
@@ -832,7 +843,7 @@ console.<span class="fn">log</span>(<span class="str">'B'</span>);              
     </div>
     <div class="compare-box">
       <div class="compare-head" style="color:var(--green)">✅ Đúng chuẩn</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+      <div class="code-block">
 <span class="kw">async function</span> <span class="fn">fetchUser</span>(id) {
   <span class="kw">try</span> {
     <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/users/<span class="kw">${</span>id<span class="kw">}</span>`</span>);
@@ -855,7 +866,7 @@ console.<span class="fn">log</span>(<span class="str">'B'</span>);              
   <div class="compare-grid">
     <div class="compare-box">
       <div class="compare-head" style="color:var(--red)">❌ Sequential — lãng phí 4.5s</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+      <div class="code-block">
 <span class="kw">async function</span> <span class="fn">loadSlow</span>() {
   <span class="kw">const</span> user  = <span class="kw">await</span> <span class="fn">getUser</span>();  <span class="cm">// 1s</span>
   <span class="kw">const</span> posts = <span class="kw">await</span> <span class="fn">getPosts</span>(); <span class="cm">// 2s</span>
@@ -865,7 +876,7 @@ console.<span class="fn">log</span>(<span class="str">'B'</span>);              
     </div>
     <div class="compare-box">
       <div class="compare-head" style="color:var(--green)">✅ Parallel — chỉ 2s</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+      <div class="code-block">
 <span class="kw">async function</span> <span class="fn">loadFast</span>() {
   <span class="kw">const</span> [user, posts, tags] =
     <span class="kw">await</span> Promise.<span class="fn">all</span>([
@@ -938,7 +949,7 @@ console.<span class="fn">log</span>(users); <span class="cm">// [User1, User2, U
   <div class="compare-grid">
     <div class="compare-box">
       <div class="compare-head" style="color:var(--red)">❌ Race Condition</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+      <div class="code-block">
 <span class="kw">async function</span> <span class="fn">search</span>(query) {
   <span class="kw">const</span> results = <span class="kw">await</span> <span class="fn">fetchSearch</span>(query);
   <span class="cm">// "cat" chậm hơn "cats"</span>
@@ -949,7 +960,7 @@ console.<span class="fn">log</span>(users); <span class="cm">// [User1, User2, U
     </div>
     <div class="compare-box">
       <div class="compare-head" style="color:var(--green)">✅ Fix 1 — AbortController</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;font-size:12.5px;">
+      <div class="code-block">
 <span class="kw">let</span> controller = <span class="kw">null</span>;
 <span class="kw">async function</span> <span class="fn">searchFixed</span>(query) {
   controller?.<span class="fn">abort</span>(); <span class="cm">// huỷ request trước</span>
@@ -1025,7 +1036,7 @@ console.<span class="fn">log</span>(users); <span class="cm">// [User1, User2, U
   <div class="compare-grid">
     <div class="compare-box">
       <div class="compare-head">⏳ Debounce — chờ yên rồi mới chạy</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+      <div class="code-block">
 <span class="kw">function</span> <span class="fn">debounce</span>(fn, delay) {
   <span class="kw">let</span> timer;                <span class="cm">// closure!</span>
   <span class="kw">return function</span>(...args) {
@@ -1045,7 +1056,7 @@ console.<span class="fn">log</span>(users); <span class="cm">// [User1, User2, U
     </div>
     <div class="compare-box">
       <div class="compare-head">⏱ Throttle — tối đa 1 lần/Xms</div>
-      <div class="code-block" style="margin:0;border:none;border-radius:0;">
+      <div class="code-block">
 <span class="kw">function</span> <span class="fn">throttle</span>(fn, limit) {
   <span class="kw">let</span> lastRun = <span class="num">0</span>;        <span class="cm">// closure!</span>
   <span class="kw">return function</span>(...args) {
