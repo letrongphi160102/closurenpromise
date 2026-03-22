@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Closure & Promise</title>
+<title>Giáo Án: Closure & Promise — 18 Mục Đầy Đủ</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500&family=DM+Sans:wght@300;400;500&display=swap');
 :root{
@@ -54,6 +54,11 @@ p code,li code{font-family:'IBM Plex Mono',monospace;font-size:12.5px;background
 /* CODE BLOCK */
 .code{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem 1.4rem;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.9;overflow-x:auto;margin:.75rem 0 1rem;white-space:pre;tab-size:2;position:relative}
 .code .lbl{position:absolute;top:9px;right:12px;font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
+.copy-btn{position:absolute;top:8px;right:12px;display:flex;align-items:center;gap:5px;padding:3px 10px;font-size:11px;font-family:'IBM Plex Mono',monospace;font-weight:400;color:var(--text3);background:var(--bg3);border:1px solid var(--border);border-radius:5px;cursor:pointer;transition:all .15s;line-height:1.5;z-index:2;white-space:nowrap}
+.copy-btn:hover{color:var(--text2);border-color:var(--border2);background:var(--bg4)}
+.copy-btn.copied{color:var(--green);border-color:rgba(74,222,154,.35);background:var(--green-bg)}
+.copy-btn svg{width:11px;height:11px;flex-shrink:0}
+.code:has(.lbl) .copy-btn{right:84px}
 .kw{color:var(--kw)}.fn{color:var(--fn)}.str{color:var(--str)}.num{color:var(--num)}.cm{color:var(--cm)}
 .hl{display:block;background:rgba(244,96,96,.1);margin:0 -1.4rem;padding:0 1.4rem;border-left:2px solid var(--red)}
 .hl-ok{display:block;background:rgba(74,222,154,.07);margin:0 -1.4rem;padding:0 1.4rem;border-left:2px solid var(--green)}
@@ -103,9 +108,11 @@ hr.div{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <nav class="sidebar">
   <div class="logo">
-    <h1>Closure &amp; Promise v.001.0</h1>
+    <h1>Closure &amp; Promise v.002.0</h1>
+    <span>18 mục · 3 module · JS chuyên sâu</span>
   </div>
 
   <div class="nav-sec">Module 1 · Closure</div>
@@ -137,11 +144,14 @@ hr.div{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
   <a class="nav-item" href="#cheatsheet">Cheat Sheet</a>
 </nav>
 
+<!-- MAIN -->
 <main class="main">
 
+<!-- HERO -->
 <div style="margin-bottom:2.5rem">
   <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:.75rem;letter-spacing:.06em">GIÁO ÁN CHUYÊN SÂU · JAVASCRIPT</div>
   <h1 class="hero-title">Closure &amp;<br>Promise</h1>
+  <p class="hero-sub">18 mục · 3 module · Cơ bản → Nâng cao · Bản chất đến Thực chiến</p>
   <div class="g4" style="margin-top:1rem">
     <div class="card" style="padding:.75rem 1rem"><div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-bottom:3px">MỤC TIÊU</div><div style="font-size:13px;color:var(--text2)">Hiểu bản chất</div></div>
     <div class="card" style="padding:.75rem 1rem"><div style="font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-bottom:3px">SỐ MỤC</div><div style="font-size:13px;color:var(--text2)">18 bài học</div></div>
@@ -152,9 +162,11 @@ hr.div{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
 
 <hr class="div">
 
+<!-- ═══════════════ MODULE 1 ═══════════════ -->
 <div class="mod-pill"><div class="dot" style="background:var(--accent)"></div>Module 1 · Closure</div>
 <h2 class="mod" id="module1" style="border-top:none;margin-top:.5rem">Closure</h2>
 
+<!-- 1.1 -->
 <h3 class="sec" id="ec">1.1 Execution Context &amp; Call Stack</h3>
 <span class="badge b-g">Cơ bản</span>
 <p>Mỗi khi JavaScript chạy một function, engine tạo ra một <strong>Execution Context (EC)</strong> — một "hộp cát" riêng chứa: biến cục bộ, tham chiếu đến scope cha, và con trỏ <code>this</code>. Tất cả EC được quản lý bởi <strong>Call Stack</strong> theo nguyên tắc LIFO (Last In, First Out).</p>
@@ -182,6 +194,7 @@ hr.div{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
 
 <div class="note n-purple"><strong>Tại sao cần hiểu EC?</strong> Closure hoạt động dựa trên việc EC "bị giữ lại" dù đã pop khỏi Call Stack. Hiểu EC là nền tảng để hiểu closure không phải là "magic" — nó có cơ chế cụ thể.</div>
 
+<!-- 1.2 -->
 <h3 class="sec" id="scope">1.2 Scope: local / global / block</h3>
 <span class="badge b-g">Cơ bản</span>
 <p><strong>Scope</strong> là phạm vi mà một biến có thể được truy cập. JavaScript có 3 loại scope quan trọng, và sự khác biệt giữa <code>var</code>, <code>let</code>, <code>const</code> nằm chính ở đây.</p>
@@ -194,10 +207,10 @@ hr.div{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
 <span class="kw">const</span> globalConst = <span class="str">'everywhere'</span>;
 
 <span class="cm">// Tất cả đều truy cập được từ mọi nơi</span>
-<span class="cm">// JS hiện đại (ES2020) dùng globalThis thay vì window:</span>
-globalThis.globalVar;   <span class="cm">// ✅ 'everywhere'</span>
-globalThis.globalLet;   <span class="cm">// undefined</span>
-globalThis.globalConst; <span class="cm">// undefined</span></div>
+<span class="cm">// var còn gắn vào window object:</span>
+window.globalVar;   <span class="cm">// ✅ 'everywhere'</span>
+window.globalLet;   <span class="cm">// undefined</span>
+window.globalConst; <span class="cm">// undefined</span></div>
   </div>
   <div>
     <h4 class="sub">Function Scope (Local)</h4>
@@ -260,11 +273,12 @@ console.<span class="fn">log</span>(b); <span class="cm">// ❌ ReferenceError: 
   <tr><td>Hoisting</td><td>Có (= undefined)</td><td>Có (TDZ)</td><td>Có (TDZ)</td></tr>
   <tr><td>Redeclare</td><td>✅ Được</td><td>❌ Không</td><td>❌ Không</td></tr>
   <tr><td>Reassign</td><td>✅ Được</td><td>✅ Được</td><td>❌ Không</td></tr>
-  <tr><td>global object</td><td>✅ Gắn vào</td><td>❌ Không</td><td>❌ Không</td></tr>
+  <tr><td>window object</td><td>✅ Gắn vào</td><td>❌ Không</td><td>❌ Không</td></tr>
 </table>
 
 <div class="note n-amber"><strong>Quy tắc thực tế:</strong> Luôn dùng <code>const</code> mặc định. Chỉ dùng <code>let</code> khi cần reassign. Không bao giờ dùng <code>var</code> trong code mới — nó là di sản của JavaScript trước ES6.</div>
 
+<!-- 1.3 -->
 <h3 class="sec" id="lexical">1.3 Lexical Scope &amp; Scope Chain</h3>
 <span class="badge b-g">Cơ bản</span>
 <p><strong>Lexical scope</strong> (còn gọi là static scope) có nghĩa là: scope của một biến được <strong>xác định tại lúc viết code</strong>, không phải lúc chạy. JavaScript nhìn vào <em>nơi function được định nghĩa</em> để tìm biến — không phải nơi nó được gọi.</p>
@@ -336,6 +350,7 @@ console.<span class="fn">log</span>(b); <span class="cm">// ❌ ReferenceError: 
 
 <div class="note n-purple"><strong>Scope chain chỉ đi lên, không đi xuống!</strong> Scope cha không thể truy cập biến của scope con. <code>level1</code> không thể đọc <code>c</code> hay <code>d</code>. Đây là tính đóng gói tự nhiên của JavaScript.</div>
 
+<!-- 1.4 -->
 <h3 class="sec" id="closure-core">1.4 Closure — Bản chất hoạt động</h3>
 <span class="badge b-y">Trung cấp</span>
 <p><strong>Định nghĩa chính xác:</strong> Closure là khả năng một function <strong>ghi nhớ và tiếp cận lexical scope của nó</strong> ngay cả khi function đó đang thực thi bên ngoài scope ban đầu.</p>
@@ -382,6 +397,7 @@ c2(); <span class="cm">// → 2</span></div>
 }
 <span class="fn">demo</span>()(); <span class="cm">// → 99 (không phải 1!)</span></div>
 
+<!-- 1.5 -->
 <h3 class="sec" id="loop-bug">1.5 Closure trong vòng lặp — Lỗi kinh điển</h3>
 <span class="badge b-y">Trung cấp</span>
 <p>Đây là <strong>bẫy phỏng vấn số 1</strong>. Vì closure giữ <em>tham chiếu</em> đến biến (không phải giá trị), khi dùng <code>var</code> trong loop, tất cả closure cùng trỏ vào <em>một biến duy nhất</em>.</p>
@@ -443,9 +459,10 @@ funcs[<span class="num">2</span>](); <span class="cm">// → 2 ✓</span></div>
 
 <div class="note n-red"><strong>Tại sao var bị lỗi?</strong> <code>var</code> không có block scope. Toàn bộ vòng lặp chỉ có <em>một</em> biến <code>i</code> dùng chung. Các closure không lưu giá trị <code>i</code> — chúng lưu <em>tham chiếu</em> đến biến <code>i</code>. Khi loop kết thúc, <code>i = 3</code>, tất cả closure đọc cùng một giá trị đó.</div>
 
+<!-- 1.6 -->
 <h3 class="sec" id="factory">1.6 Factory Function &amp; Module Pattern</h3>
 <span class="badge b-r">Nâng cao</span>
-<p>Factory function là hàm trả về object với <strong>private state qua closure</strong>. Đây là cách implement encapsulation trong JavaScript.</p>
+<p>Factory function là hàm trả về object với <strong>private state qua closure</strong>. Đây là cách implement encapsulation trong JavaScript mà không cần <code>class</code>.</p>
 
 <div class="code"><span class="cm">// Factory Function — private state + public interface</span>
 <span class="kw">function</span> <span class="fn">createUser</span>(name, role) {
@@ -508,8 +525,6 @@ c.<span class="fn">get</span>(); <span class="cm">// ✅ 3 — hoạt động đ
   </div>
 </div>
 
-<div class="note n-blue"><strong>Lưu ý (Từ ES2022+):</strong> Hiện tại JavaScript đã hỗ trợ <strong>Private Class Fields (<code>#</code>)</strong>. Bạn hoàn toàn có thể tạo private state thực sự trong class (Hard Privacy) mà không cần Closure: <code>class Counter { #count = 0; }</code>. Tuy nhiên, kiến trúc Factory (Composition) vẫn rất mạnh và phổ biến để tránh lỗi rắc rối với <code>this</code>.</div>
-
 <h4 class="sub">Revealing Module Pattern</h4>
 <div class="code"><span class="cm">// IIFE + closure = module với public/private API rõ ràng</span>
 <span class="kw">const</span> CartModule = (() => {
@@ -547,6 +562,7 @@ CartModule.items;        <span class="cm">// undefined — protected!</span></di
 <span class="kw">const</span> <span class="fn">createPenguin</span> = (name) => Object.<span class="fn">assign</span>({name}, <span class="fn">canSwim</span>({name}), <span class="fn">canDive</span>({name}));
 <span class="cm">// penguin không có canFly — không cần sửa class hierarchy!</span></div>
 
+<!-- 1.7 -->
 <h3 class="sec" id="memo">1.7 Memoization &amp; Private state</h3>
 <span class="badge b-r">Nâng cao</span>
 <p>Memoization là kỹ thuật dùng closure để <strong>cache kết quả tính toán tốn kém</strong>. Lần đầu gọi → tính và lưu. Lần sau gọi cùng args → trả từ cache ngay.</p>
@@ -577,8 +593,6 @@ console.<span class="fn">log</span>(<span class="fn">fib</span>(<span class="num
 console.<span class="fn">log</span>(<span class="fn">fib</span>(<span class="num">40</span>)); <span class="cm">// cache hit — tức thì!</span>
 console.<span class="fn">log</span>(<span class="fn">fib</span>(<span class="num">39</span>)); <span class="cm">// cache hit — đã tính khi tính fib(40)</span></div>
 
-<div class="note n-amber"><strong>Cẩn thận:</strong> Việc dùng <code>JSON.stringify</code> làm key để demo thì dễ hiểu, nhưng thực tế sẽ gặp lỗi nếu tham số truyền vào bị tham chiếu vòng (Circular Reference) và nó cũng không phân biệt được các object đặc biệt như <code>Date</code>, <code>Map</code>, <code>Set</code>, <code>Function</code>. Trong thực chiến, các thư viện xịn (như Lodash.memoize) sẽ có cơ chế băm (hashing) chuyên dụng hoặc dùng <code>WeakMap</code> để xử lý an toàn cho caching object.</div>
-
 <h4 class="sub">Partial Application</h4>
 <div class="code"><span class="cm">// Closure giữ "preset args" — tạo hàm chuyên dụng từ hàm tổng quát</span>
 <span class="kw">function</span> <span class="fn">partial</span>(fn, ...presetArgs) {
@@ -603,9 +617,11 @@ POST(<span class="str">'/users'</span>, userData); <span class="cm">// → apiFe
 
 <hr class="div">
 
+<!-- ═══════════════ MODULE 2 ═══════════════ -->
 <div class="mod-pill"><div class="dot" style="background:var(--blue)"></div>Module 2 · Promise &amp; Async</div>
 <h2 class="mod" id="module2" style="border-top:none;margin-top:.5rem">Promise &amp; Async</h2>
 
+<!-- 2.1 -->
 <h3 class="sec" id="sync-async">2.1 Synchronous vs Asynchronous</h3>
 <span class="badge b-g">Cơ bản</span>
 <p>Đây là nền tảng để hiểu tại sao Promise và async/await ra đời. JavaScript là <strong>single-threaded</strong> — chỉ làm một việc tại một thời điểm. Nhưng web cần làm nhiều việc cùng lúc (gọi API, đọc file, đếm ngược...).</p>
@@ -662,11 +678,10 @@ console.<span class="fn">log</span>(<span class="str">'Tôi chạy trước'</sp
   <tr><td><code>fs.readFile</code> (Node.js)</td><td>Node.js libuv</td><td>Callback / Promise</td></tr>
 </table>
 
+<!-- 2.2 -->
 <h3 class="sec" id="eventloop">2.2 Event Loop &amp; Callback Queue</h3>
 <span class="badge b-g">Cơ bản</span>
 <p>Event Loop là vòng lặp liên tục kiểm tra: "Call Stack trống chưa? Nếu rồi thì lấy task tiếp theo từ queue". Có <strong>2 loại queue</strong> với độ ưu tiên khác nhau.</p>
-
-<div class="note n-purple"><strong>Lưu ý:</strong> Kiến trúc dưới đây là mô hình Event Loop của <strong>Trình duyệt (Browser)</strong>. Event Loop trong môi trường <strong>Node.js</strong> có thiết kế phức tạp hơn nhiều với các phase (Timers, Pending, Poll, Check) và có thêm <code>process.nextTick()</code> (chạy trứơc cả Promise microtask).</div>
 
 <div class="code"><span class="cm">// Câu đố kinh điển — đoán output:</span>
 console.<span class="fn">log</span>(<span class="str">'1 — sync'</span>);
@@ -695,6 +710,9 @@ console.<span class="fn">log</span>(<span class="str">'5 — sync'</span>);
 }
 <span class="cm">// UI sẽ đóng băng vì setTimeout không bao giờ chạy được</span></div>
 
+<div class="note n-purple"><strong>Quy tắc vàng:</strong> Toàn bộ Microtask Queue được drain hết <em>trước khi</em> Event Loop lấy task tiếp từ Macrotask Queue. Vì vậy <code>Promise.then</code> luôn chạy trước <code>setTimeout</code> dù cả hai đều "pending".</div>
+
+<!-- 2.3 -->
 <h3 class="sec" id="cbhell">2.3 Callback Hell — Vấn đề cần giải quyết</h3>
 <span class="badge b-g">Cơ bản</span>
 <p>Khi cần thực hiện nhiều tác vụ async tuần tự (kết quả sau phụ thuộc vào kết quả trước), callback lồng vào nhau tạo ra "<strong>Pyramid of Doom</strong>".</p>
@@ -730,6 +748,7 @@ console.<span class="fn">log</span>(<span class="str">'5 — sync'</span>);
   </div>
 </div>
 
+<!-- 2.4 -->
 <h3 class="sec" id="promise-core">2.4 Promise — 3 Trạng thái &amp; Cú pháp</h3>
 <span class="badge b-y">Trung cấp</span>
 <p>Promise là object đại diện cho một <strong>giá trị chưa có ngay</strong>. Nó có đúng 3 trạng thái và chỉ chuyển trạng thái <strong>một lần duy nhất, không thể đảo ngược</strong>.</p>
@@ -766,6 +785,7 @@ console.<span class="fn">log</span>(<span class="str">'5 — sync'</span>);
 Promise.<span class="fn">resolve</span>(<span class="num">42</span>);        <span class="cm">// Fulfilled với value = 42</span>
 Promise.<span class="fn">reject</span>(<span class="kw">new</span> <span class="fn">Error</span>()); <span class="cm">// Rejected với error</span></div>
 
+<!-- 2.5 -->
 <h3 class="sec" id="then-catch">2.5 .then() / .catch() / .finally()</h3>
 <span class="badge b-y">Trung cấp</span>
 <p>Đây là bộ 3 method để xử lý kết quả từ Promise. Chúng trả về Promise mới — cho phép <strong>chain liên tiếp</strong>.</p>
@@ -841,6 +861,7 @@ Promise.<span class="fn">resolve</span>(<span class="num">1</span>)
   </div>
 </div>
 
+<!-- 2.6 -->
 <h3 class="sec" id="combinators">2.6 Promise Combinators</h3>
 <span class="badge b-r">Nâng cao</span>
 
@@ -879,6 +900,7 @@ results.<span class="fn">forEach</span>(r => {
   <span class="fn">fetch</span>(<span class="str">'https://cdn3.example.com/file.js'</span>)
 ]); <span class="cm">// lấy CDN nào phản hồi nhanh nhất và thành công</span></div>
 
+<!-- 2.7 -->
 <h3 class="sec" id="async-await">2.7 async / await — Sugar syntax</h3>
 <span class="badge b-r">Nâng cao</span>
 <p><code>async/await</code> là syntactic sugar trên Promise — không phải tính năng mới hoàn toàn. Một <code>async function</code> luôn trả về Promise. <code>await</code> không block JS thread — nó nhường control về Event Loop và tiếp tục khi Promise settle.</p>
@@ -985,17 +1007,13 @@ ids.<span class="fn">forEach</span>(<span class="kw">async</span>(id) => {
 <span class="kw">const</span> users = <span class="kw">await</span> Promise.<span class="fn">all</span>(ids.<span class="fn">map</span>(id => <span class="fn">getUser</span>(id)));
 console.<span class="fn">log</span>(users); <span class="cm">// [User1, User2, User3]</span></div>
 
-<h4 class="sub">Top-Level await (ES2022)</h4>
-<div class="code"><span class="cm">// Trong các file ES Module (thường có type="module"), bạn có thể dùng await trực tiếp ở Global Scope mà không cần bọc trong async function:</span>
-<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/config'</span>);
-<span class="kw">const</span> config = <span class="kw">await</span> res.<span class="fn">json</span>();
-console.<span class="fn">log</span>(<span class="str">'Cấu hình đã tải:'</span>, config);</div>
-
 <hr class="div">
 
+<!-- ═══════════════ MODULE 3 ═══════════════ -->
 <div class="mod-pill"><div class="dot" style="background:var(--teal)"></div>Module 3 · Thực chiến</div>
 <h2 class="mod" id="module3" style="border-top:none;margin-top:.5rem">Thực chiến</h2>
 
+<!-- 3.1 -->
 <h3 class="sec" id="closure-async">3.1 Closure trong async function</h3>
 <span class="badge b-r">Nâng cao</span>
 
@@ -1041,7 +1059,7 @@ console.<span class="fn">log</span>(<span class="str">'Cấu hình đã tải:'<
     <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/search?q=<span class="kw">${</span>query<span class="kw">}</span>`</span>, { signal: controller.signal });
     <span class="fn">showResults</span>(<span class="kw">await</span> res.<span class="fn">json</span>());
   } <span class="kw">catch</span> (e) {
-    <span class="kw">if</span> (e.name !== <span class="str">'AbortError'</span>) <span class="kw">throw</span> e; <span class="cm">// ✅ Bỏ qua lỗi này vì ta chủ động abort request (không phải lỗi thực sự do API hỏng)</span>
+    <span class="kw">if</span> (e.name !== <span class="str">'AbortError'</span>) <span class="kw">throw</span> e; <span class="cm">// bỏ qua AbortError — là bình thường</span>
   }
 }
 
@@ -1054,6 +1072,7 @@ console.<span class="fn">log</span>(<span class="str">'Cấu hình đã tải:'<
   <span class="fn">showResults</span>(results);               <span class="cm">// ✅ chỉ hiện kết quả mới nhất</span>
 }</div>
 
+<!-- 3.2 -->
 <h3 class="sec" id="retry">3.2 Retry Pattern với Closure</h3>
 <span class="badge b-r">Nâng cao</span>
 <div class="code"><span class="kw">function</span> <span class="fn">withRetry</span>(fn, maxRetries = <span class="num">3</span>, baseDelay = <span class="num">100</span>) {
@@ -1090,6 +1109,7 @@ console.<span class="fn">log</span>(<span class="str">'Cấu hình đã tải:'<
   <span class="num">3</span>
 );</div>
 
+<!-- 3.3 -->
 <h3 class="sec" id="debounce">3.3 Debounce &amp; Throttle từ đầu</h3>
 <span class="badge b-r">Nâng cao</span>
 
@@ -1156,6 +1176,7 @@ window.addEventListener(<span class="str">'scroll'</span>, onScroll);
   <tr><td>Infinite scroll trigger</td><td>Throttle</td><td>Check vị trí scroll đều đặn</td></tr>
 </table>
 
+<!-- 3.4 -->
 <h3 class="sec" id="lru">3.4 Xây dựng LRU Cache với TTL</h3>
 <span class="badge b-r">Nâng cao</span>
 
@@ -1231,12 +1252,13 @@ cache.<span class="fn">stats</span>();    <span class="cm">// { size:3, hits:1, 
 
 <hr class="div">
 
+<!-- INTERVIEW -->
 <h2 class="mod" id="interview" style="border-top:none;margin-top:0">Câu hỏi Phỏng vấn Thường gặp</h2>
 
 <table>
   <tr><th>Câu hỏi</th><th>Điểm cốt lõi cần trả lời</th></tr>
   <tr><td>"Closure là gì?"</td><td>Function + lexical environment. EC của outer fn bị pop nhưng biến được giữ trong Closure Record nếu còn tham chiếu. Ví dụ counter.</td></tr>
-  <tr><td>"var vs let vs const?"</td><td>var: function scope, hoisted=undefined, gắn window/globalThis. let: block scope, TDZ. const: block scope, TDZ, không reassign. Khi nào dùng cái nào.</td></tr>
+  <tr><td>"var vs let vs const?"</td><td>var: function scope, hoisted=undefined, gắn window. let: block scope, TDZ. const: block scope, TDZ, không reassign. Khi nào dùng cái nào.</td></tr>
   <tr><td>"Tại sao var trong for loop bị lỗi?"</td><td>var không có block scope → 1 biến i duy nhất. Closure giữ reference, không phải value. Khi chạy, i=3. Fix: let / IIFE / factory.</td></tr>
   <tr><td>"Event Loop là gì?"</td><td>Single-thread. Sync → Microtask Queue (drain hết) → Macrotask Queue (1 task). Promise.then = micro, setTimeout = macro.</td></tr>
   <tr><td>"Promise.all vs allSettled?"</td><td>all: fail-fast, 1 reject → tất cả reject. allSettled: luôn resolve, báo cáo từng kết quả. Dùng all khi cần tất cả; allSettled khi muốn xử lý từng cái.</td></tr>
@@ -1245,6 +1267,7 @@ cache.<span class="fn">stats</span>();    <span class="cm">// { size:3, hits:1, 
   <tr><td>"LRU Cache hoạt động thế nào?"</td><td>Map giữ thứ tự insertion. get() phải promote (delete + re-insert = về cuối = MRU). set() check has() trước. Evict = keys().next() = đầu Map = LRU. clear() reset stats.</td></tr>
 </table>
 
+<!-- CHEAT SHEET -->
 <h2 class="mod" id="cheatsheet" style="margin-top:3rem;border-top:none">Cheat Sheet</h2>
 
 <div class="g2">
@@ -1295,19 +1318,48 @@ cache.<span class="fn">stats</span>();    <span class="cm">// { size:3, hits:1, 
 </div>
 
 <div class="footer">
-  <p>Closure &amp; Promise</p>
-  <p>Le Trong Phi</p>
+  <p>Closure &amp; Promise · JavaScript Chuyên Sâu</p>
+  <p style="margin-top:4px">18 mục · 3 module · Cơ bản → Nâng cao</p>
 </div>
 
 </main>
 
 <script>
-const items = document.querySelectorAll('.nav-item');
-const sections = [...document.querySelectorAll('[id]')];
+const copyIcon='<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M3 10.5H2.5A1.5 1.5 0 0 1 1 9V2.5A1.5 1.5 0 0 1 2.5 1H9A1.5 1.5 0 0 1 10.5 2.5V3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+const checkIcon='<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+document.querySelectorAll('.code').forEach(block=>{
+  const btn=document.createElement('button');
+  btn.className='copy-btn';
+  btn.innerHTML=copyIcon+'Copy';
+  block.appendChild(btn);
+  btn.addEventListener('click',async()=>{
+    const clone=block.cloneNode(true);
+    clone.querySelectorAll('.copy-btn,.lbl').forEach(el=>el.remove());
+    const text=clone.textContent.trim();
+    const doFeedback=()=>{
+      btn.classList.add('copied');
+      btn.innerHTML=checkIcon+'Copied!';
+      setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML=copyIcon+'Copy';},1800);
+    };
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(text).then(doFeedback).catch(()=>{});
+    } else {
+      const ta=document.createElement('textarea');
+      ta.value=text;ta.style.cssText='position:fixed;opacity:0';
+      document.body.appendChild(ta);ta.select();
+      document.execCommand('copy');document.body.removeChild(ta);
+      doFeedback();
+    }
+  });
+});
+
+const items=document.querySelectorAll('.nav-item');
+const sections=[...document.querySelectorAll('[id]')];
 function updateNav(){
   let cur='';
-  sections.forEach(s=>{ if(window.scrollY>=s.offsetTop-110) cur=s.id; });
-  items.forEach(a=>{ a.classList.toggle('active', a.getAttribute('href').slice(1)===cur); });
+  sections.forEach(s=>{if(window.scrollY>=s.offsetTop-110)cur=s.id;});
+  items.forEach(a=>{a.classList.toggle('active',a.getAttribute('href').slice(1)===cur);});
 }
 window.addEventListener('scroll',updateNav,{passive:true});
 updateNav();
@@ -1315,7 +1367,7 @@ items.forEach(a=>{
   a.addEventListener('click',e=>{
     e.preventDefault();
     const el=document.getElementById(a.getAttribute('href').slice(1));
-    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
   });
 });
 </script>
